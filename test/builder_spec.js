@@ -2,8 +2,10 @@ var chai = require('chai');
 var should = require('chai').should();
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
+require("mocha-as-promised")();
 
-var Builder = require('../lib/builder.js');
+var Builder = require('../lib/builder');
+var PatternType = require('../lib/pattern_type');
 
 describe('Builder', function() {
 
@@ -31,9 +33,11 @@ describe('Builder', function() {
 
         it("populates pattern types", function(done) {
             var self = this;
-            var promise = this.builder.gatherPatternInfo();
-            promise.should.be.fulfilled.then(function() {
-                self.builder.patternTypes.length.should.not == 0;
+            var builderPromise = this.builder.gatherPatternInfo();
+            builderPromise.should.be.fulfilled.then(function() {
+                self.builder.patternTypes.length.should.eq(1);
+                self.builder.patternTypes[0].should.be.instanceOf(PatternType);
+                self.builder.patternTypes[0].name.should.eq('00-atoms');
             }).should.notify(done);
         });
     });
