@@ -1,27 +1,27 @@
 var should = require('chai').should();
-var PatternUtil = require('../lib/util.js').PatternUtil;
+var Pattern = require('../lib/pattern.js');
 
 
-describe('Util', function() {
+describe('Pattern', function() {
 
-    describe('using PatternUtil#patternName', function() {
+    describe('Pattern#formatName', function() {
         it('returns a pattern name', function() {
-            var name = PatternUtil.patternName('01-my-pattern');
+            var name = Pattern.formatName('01-my-pattern');
             name.should.equal('my-pattern');
         });
 
         it('converts hypens to spaces', function() {
-            var name = PatternUtil.patternName('01-my-pattern', true);
+            var name = Pattern.formatName('01-my-pattern', true);
             name.should.equal('my pattern');
         });
 
         it('handles 00 pattern names', function() {
-            var name = PatternUtil.patternName('00-my-pattern');
+            var name = Pattern.formatName('00-my-pattern');
             name.should.equal('my-pattern');
         });
 
         it('handles no pattern number', function() {
-            var name = PatternUtil.patternName('my-pattern');
+            var name = Pattern.formatName('my-pattern');
             name.should.equal('my-pattern');
         });
     });
