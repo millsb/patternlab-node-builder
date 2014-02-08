@@ -1,2 +1,4 @@
 node_modules
 builder.php
+*.sublime-project
+*.sublime-workspace
