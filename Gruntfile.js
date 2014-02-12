@@ -18,9 +18,6 @@ module.exports = function(grunt) {
             scripts: {
                 files: ['lib/**/*.js', 'test/**/*.js'],
                 tasks: ['jshint', 'mochaTest'],
-                options: {
-                  spawn: false,
-                },
             }
         }
   });

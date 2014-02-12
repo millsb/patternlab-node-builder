@@ -1,12 +1,15 @@
-var chai = require('chai');
-var should = require('chai').should();
-var expect = require('chai').expect;
-var chaiAsPromised = require('chai-as-promised');
+var chai = require('chai'),
+    should = require('chai').should(),
+    expect = require('chai').expect,
+    chaiAsPromised = require('chai-as-promised');
+
 chai.use(chaiAsPromised);
 require("mocha-as-promised")();
 
-var Builder = require('../lib/builder');
-var PatternType = require('../lib/pattern_type');
+var Builder = require('../lib/builder'),
+    PatternType = require('../lib/pattern_type'),
+    Pattern = require('../lib/pattern'),
+    Data = require('../lib/data');
 
 describe('Builder', function() {
 
@@ -50,6 +53,27 @@ describe('Builder', function() {
                 type.parentType.should.equal('01-molecules')
             }).should.notify(done);
         });
+
+        it('populates patterns', function (done) {
+            var self = this;
+            var builderPromise = this.builder.gatherPatternInfo();
+            builderPromise.should.be.fulfilled.then(function() {
+                self.builder.patterns.length.should.be.gt(1);
+                self.builder.patterns[0].should.be.instanceOf(Pattern);
+                self.builder.patterns[0].name.should.eq('01-navbar');
+            }).should.notify(done);
+        });
+        it('populated pattern data', function (done) {
+            var self = this;
+            var builderPromise = this.builder.gatherPatternInfo();
+            builderPromise.should.be.fulfilled.then(function() {
+                console.log(self.builder.patternData);
+                self.builder.patternData.length.should.be.gt(0);
+                self.builder.patternData[0].should.be.instanceOf(Data);
+                self.builder.patternData[0].patternName().should.equal('navbar');
+            }).should.notify(done);
+            
+        });
     });
 
     describe('#handleSubTypeDir', function() {
@@ -61,6 +85,20 @@ describe('Builder', function() {
             var fn = function() { self.builder.handleSubTypeDir('01-molecules', 'foo/bar/00-atoms') };
             fn.should.throw(Error);
         });
+    });
+
+    describe('#handleMustacheFile', function() {
+        before(function() {
+            this.builder = new Builder({ sourceDir: "", publicDir: ""});
+        });
+        it('throws an exception if parent type is not registered', function () {
+            var self = this;
+            var fn = function() { self.builder.handleMustacheFile('01-molecules', 'foo/bar/00-atoms') };
+            fn.should.throw(Error);
+        });
+    });
+
+    describe('#handleJsonFile', function() {
     });
 
     describe('#findPatternType', function () {
