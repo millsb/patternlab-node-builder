@@ -60,19 +60,34 @@ describe('Builder', function() {
             builderPromise.should.be.fulfilled.then(function() {
                 self.builder.patterns.length.should.be.gt(1);
                 self.builder.patterns[0].should.be.instanceOf(Pattern);
-                self.builder.patterns[0].name.should.eq('01-navbar');
             }).should.notify(done);
         });
-        it('populated pattern data', function (done) {
+        it('populates pattern data', function (done) {
             var self = this;
             var builderPromise = this.builder.gatherPatternInfo();
             builderPromise.should.be.fulfilled.then(function() {
-                console.log(self.builder.patternData);
                 self.builder.patternData.length.should.be.gt(0);
                 self.builder.patternData[0].should.be.instanceOf(Data);
-                self.builder.patternData[0].patternName().should.equal('navbar');
+                self.builder.patternData[0].patternName().should.equal('test-navbar');
             }).should.notify(done);
             
+        });
+    });
+
+    describe("#gatherLineages", function() {
+        beforeEach(function() {
+            var config = { sourceDir: "./test/data/source/_patterns", publicDir: "./data/source/_public" };
+            this.builder = new Builder(config);
+        });
+
+        it('populates lineage data', function(done) {
+            var self = this;
+            this.builder.patterns = [ new Pattern("./test/data/source/_patterns/03-organisms/01-masthead.mustache") ]
+            this.builder.gatherLineages().should.be.fulfilled.then(function() {
+                self.builder.lineages.length.should.be.gt(0);
+                self.builder.lineages[0].pattern.should.equal('./test/data/source/_patterns/03-organisms/01-masthead.mustache');
+                self.builder.lineages[0].refers.length.should.be.gt(0);
+            }).should.notify(done);
         });
     });
 

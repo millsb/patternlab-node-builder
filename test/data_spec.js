@@ -37,16 +37,9 @@ describe('Data', function () {
 				data.obj.foo.should.equal('LIKE A BOSS!');
 			}).should.notify(done);
 		});
-		it('throws exception on file error', function (done) {
+		it('promise is rejected on file error', function () {
 			var data = new Data("./wrongpath");
-			var fn = function() {
-				data.read().should.be.fulfilled.then(function(data) {
-				}).should.notify(done);
-			};
-
-			fn.should.throw();
-
-
+			data.read().should.be.rejected;
 		});
 	})
 });

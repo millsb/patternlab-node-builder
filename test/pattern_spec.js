@@ -41,6 +41,17 @@ describe('Pattern', function() {
         });
     });
 
+    describe("#getTemplate", function() {
+        it('reads the template file to a string', function() {
+            var pattern = new Pattern('./test/data/source/_patterns/01-molecules/01-components/01-navbar.mustache', 'bar');
+            pattern.getTemplate().should.eventually.equal("<p>{{foo}}</p>\n");
+        });
+        it('reject the promise if file error', function() {
+            var pattern = new Pattern('./totally/not/a/path');
+            pattern.getTemplate().should.be.rejected;
+        });
+    });
+
     describe('Pattern#formatName', function() {
         it('returns a pattern name', function() {
             var name = Pattern.formatName('01-my-pattern');
