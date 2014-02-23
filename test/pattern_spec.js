@@ -52,43 +52,5 @@ describe('Pattern', function() {
         });
     });
 
-    describe('Pattern#formatName', function() {
-        it('returns a pattern name', function() {
-            var name = Pattern.formatName('01-my-pattern');
-            name.should.equal('my-pattern');
-        });
-
-        it('converts hypens to spaces', function() {
-            var name = Pattern.formatName('01-my-pattern', true);
-            name.should.equal('my pattern');
-        });
-
-        it('handles 00 pattern names', function() {
-            var name = Pattern.formatName('00-my-pattern');
-            name.should.equal('my-pattern');
-        });
-
-        it('handles no pattern number', function() {
-            var name = Pattern.formatName('my-pattern');
-            name.should.equal('my-pattern');
-        });
-    });
-    describe('Pattern:#pathToName', function () {
-        it('returns a single pattern name', function () {
-            var aPath = 'foo/bar/baz-bat.mustache';
-            Pattern.pathToName(aPath).should.equal("baz-bat");
-        });
-
-        it('with includeType, returns a pattern name with type', function() {
-            var aPath = 'foo/bar/baz-bat.mustache';
-            Pattern.pathToName(aPath, true).should.equal("foo-baz-bat");
-        });
-
-        it('returns a single pattern name when no type provided', function() {
-            var aPath = "foo.mustache";
-            Pattern.pathToName(aPath).should.equal('foo');
-        });
-        
-    });
 
 });
