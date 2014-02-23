@@ -84,10 +84,84 @@ describe('Builder', function() {
             var self = this;
             this.builder.patterns = [ new Pattern("./test/data/source/_patterns/03-organisms/01-masthead.mustache") ]
             this.builder.gatherLineages().should.be.fulfilled.then(function() {
-                self.builder.lineages.length.should.be.gt(0);
-                self.builder.lineages[0].pattern.should.equal('./test/data/source/_patterns/03-organisms/01-masthead.mustache');
-                self.builder.lineages[0].refers.length.should.be.gt(0);
+                self.builder.patternLineages.length.should.be.gt(0);
+                self.builder.patternLineages[0].pattern.should.equal('./test/data/source/_patterns/03-organisms/01-masthead.mustache');
+                self.builder.patternLineages[0].refers.length.should.be.gt(0);
             }).should.notify(done);
+        });
+    });
+
+    describe('#dataForPattern', function () {
+        beforeEach(function() {
+            var config = { sourceDir: "./test/data/source/_patterns", publicDir: "./data/source/_public" };
+            this.builder = new Builder(config);
+            this.builder.patternData.push(new Data("/foo/bar.mustache"));
+            this.builder.patternData.push(new Data('/foo/bar~baz.mustache'));
+        });
+
+        it("returns a matching data object", function() {
+            var data = this.builder.dataForPattern('/foo/bar.mustache');
+            data.should.be.an("array");
+            data.length.should.equal(2);
+            data[0].should.be.instanceOf(Data);
+            data[0].filePath.should.equal('/foo/bar.mustache');
+        });
+
+        it("returns empty set if no match", function() {
+            var data = this.builder.dataForPattern('/bat/baz.mustache');
+            data.should.be.empty;
+
+        });
+
+        it("returns a data object if partial", function() {
+            var data = this.builder.dataForPattern('/foo/bar.mustache');
+            data[1].filePath.should.equal('/foo/bar~baz.mustache');
+        });
+        
+    });
+
+    describe('#lineagesForPattern', function () {
+        beforeEach(function() {
+            var config = { sourceDir: "./test/data/source/_patterns", publicDir: "./data/source/_public" };
+            this.builder = new Builder(config);
+            this.builder.patternLineages.push({ pattern: "/foo/bar.mustache", refers: ["{{> molecules-baz }}"]});
+
+        });
+        it('should return an array of lineage template names', function() {
+            var lineages = this.builder.lineagesForPattern("/foo/bar.mustache");
+            lineages.should.be.an("array");
+            lineages[0].should.equal("{{> molecules-baz }}");
+        });
+        it('should return empty if no lineages', function() {
+            var lineages = this.builder.lineagesForPattern("/baz/bat.mustache");
+            lineages.should.be.empty;
+
+        });
+    });
+
+    describe('#reverseLineagesForPattern', function () {
+        beforeEach(function() {
+            var config = { sourceDir: "./test/data/source/_patterns", publicDir: "./data/source/_public" };
+            this.builder = new Builder(config);
+            this.builder.patternLineages.push(
+                { pattern: "/foo/bar.mustache", refers: ["{{> molecules-baz }}"]},
+                { pattern: "/one/two.mustache", refers: ["{{> molecules-baz }}", "{{> organisms-three }}"]},
+                { pattern: "/hi/there.mustache", refers: ["{{> molecules-baz }}" ]}
+            );
+        });
+        it('should return the name of the patterns that refer to a given pattern', function () {
+            var refs = this.builder.reverseLineagesForPattern("00-molecules/001-baz.mustache");
+            refs.length.should.equal(3);
+        });
+
+        it('should ignore refs that have same pattern name, but belong to different types', function() {
+            this.builder.patternLineages.push({
+                pattern: "/three/four.mustache",
+                refers: ["{{> atoms-baz }}"]
+            });
+
+            var refs = this.builder.reverseLineagesForPattern("00-molecules/001-baz.mustache");
+            refs.length.should.equal(3);
         });
     });
 
