@@ -91,6 +91,22 @@ describe('Builder', function() {
         });
     });
 
+    describe('#getPattern', function () {
+        beforeEach(function() {
+            var config = { sourceDir: "./test/data/source/_patterns", publicDir: "./data/source/_public" };
+            this.builder = new Builder(config);
+        });
+
+        it('should return a pattern if found', function (done) {
+            var self = this;
+            this.builder.gatherPatternInfo().should.be.fulfilled.then(function() {
+                var pattern = self.builder.getPattern('organisms-masthead');
+                should.exist(pattern);
+                should.exist(self.builder.getPattern('masthead'));
+            }).should.notify(done);
+        });
+    });
+
     describe('#dataForPattern', function () {
         beforeEach(function() {
             var config = { sourceDir: "./test/data/source/_patterns", publicDir: "./data/source/_public" };
@@ -163,6 +179,23 @@ describe('Builder', function() {
             var refs = this.builder.reverseLineagesForPattern("00-molecules/001-baz.mustache");
             refs.length.should.equal(3);
         });
+    });
+
+    describe('#compilePattern', function () {
+        beforeEach(function() {
+            this.builder = new Builder({ sourceDir: "./test/data/source/_patterns", publicDir: "./test/data/source/_public" });
+            this.builder.gatherPatternInfo();
+        });
+
+        it("should return compiled pattern HTML", function(done) {
+            var self = this;
+            this.builder.gatherPatternInfo().should.be.fulfilled.then(function() {
+                self.builder.patternPreflight();
+                var pattern = self.builder.getPattern('components-navbar');
+                self.builder.compilePattern(pattern).should.eventually.equal('<p>LIKE A BOSS!</p>');
+            }).should.notify(done);
+        });
+        
     });
 
     describe('#handleSubTypeDir', function() {
