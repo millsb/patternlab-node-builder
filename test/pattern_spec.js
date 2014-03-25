@@ -6,16 +6,15 @@ describe('Pattern', function() {
 
     describe("#new", function() {
         it('returns instance of pattern', function () {
-            var pattern = new Pattern('foo', 'bar');
+            var pattern = new Pattern('foo/bar');
             pattern.should.be.instanceOf(Pattern);
         });
-        it('populates name and type', function() {
-            var pattern = new Pattern('foo', 'bar');
-            pattern.name.should.equal('foo');
-            pattern.type.should.equal('bar');
+        it('populates name', function() {
+            var pattern = new Pattern('foo/bar');
+            pattern.name.should.equal('bar');
         });
         it('strips filepath and mustache extension from name', function(){
-            var pattern = new Pattern('/foo/bar/baz.mustache', 'bat');
+            var pattern = new Pattern('/foo/bar/baz.mustache');
             pattern.name.should.equal('baz');
         });
     });
@@ -32,11 +31,11 @@ describe('Pattern', function() {
 
     describe("#partialName", function() {
         it('returns hyphenated combination of name and type', function() {
-            var pattern = new Pattern('foo', 'molecules');
+            var pattern = new Pattern('molecules/bar/foo.mustache');
             pattern.partialName().should.equal('molecules-foo');
         });
         it ('does not return underscores in hidden patterns', function() {
-            var pattern = new Pattern('_foo', 'molecules');
+            var pattern = new Pattern('molecules/bar/_foo.mustache');
             pattern.partialName().should.equal('molecules-foo');
         });
     });

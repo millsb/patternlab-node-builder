@@ -23,7 +23,7 @@ describe("Util", function() {
             name.should.equal('my-pattern');
         });
     });
-    describe('Util:#pathToName', function () {
+    describe('Util#pathToName', function () {
         it('returns a single pattern name', function () {
             var aPath = 'foo/bar/baz-bat.mustache';
             Util.pathToName(aPath).should.equal("baz-bat");
@@ -38,6 +38,16 @@ describe("Util", function() {
             var aPath = "foo.mustache";
             Util.pathToName(aPath).should.equal('foo');
         });
+
+        it('strips numbers from pattern name', function() {
+            var aPath = "molecules/bar/01-foo.mustache";
+            Util.pathToName(aPath, true).should.equal("molecules-foo");
+        });
+
+        it('strips leading slashes from filename', function() {
+        	var aPath = "/molecules/bar/01-foo.mustache";
+        	Util.pathToName(aPath, true).should.equal('molecules-foo');
+        })
         
     });
 });
