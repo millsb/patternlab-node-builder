@@ -35,16 +35,6 @@ describe('Builder', function() {
             this.builder = new Builder(config);
         });
 
-        it("populates buckets", function(done) {
-            var self = this;
-            var builderPromise = this.builder.gatherPatternInfo();
-            builderPromise.should.be.fulfilled.then(function() {
-                self.builder.buckets.length.should.be.gt(1);
-                self.builder.buckets[0].should.be.instanceOf(Bucket);
-                self.builder.buckets[0].filePath.should.eq('00-atoms');
-            }).should.notify(done);
-        });
-
         it('populates patterns', function (done) {
             var self = this;
             var builderPromise = this.builder.gatherPatternInfo();
@@ -79,6 +69,24 @@ describe('Builder', function() {
                 self.builder.patternLineages[0].pattern.should.equal('./test/data/source/_patterns/03-organisms/01-masthead.mustache');
                 self.builder.patternLineages[0].refers.length.should.be.gt(0);
             }).should.notify(done);
+        });
+    });
+
+    describe('#getBucket', function() {
+        beforeEach(function() {
+            var config = { sourceDir: "./test/data/source/_patterns", publicDir: "./data/source/_public" };
+            this.builder = new Builder(config);
+            this.builder.buckets = [new Bucket('foo', '/foo/bar')];
+        });
+
+        it('returns undefined when bucket is not present', function() {
+           var bucket = this.builder.getBucket('bar', '/baz/bat/');
+           should.not.exist(bucket);
+        });
+
+        it('returns bucket when bucket is present', function() {
+            var bucket = this.builder.getBucket(new Bucket('foo', '/foo/bar'));
+            bucket.should.be.instanceOf(Bucket);
         });
     });
 

@@ -47,7 +47,7 @@ describe("Util", function() {
         it('strips leading slashes from filename', function() {
         	var aPath = "/molecules/bar/01-foo.mustache";
         	Util.pathToName(aPath, true).should.equal('molecules-foo');
-        })
+        });
         
     });
 });
